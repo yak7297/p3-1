@@ -4,8 +4,6 @@
 
 전체 분석 과정과 그래프 해석은 **[분석 리포트 보기](REPORT.md)**에서 확인할 수 있습니다.
 
-발표나 질의응답을 준비할 때는 **[과제 설명 및 발표 준비 자료](PRESENTATION_GUIDE.md)**를 참고할 수 있습니다.
-
 ## 분석 질문
 
 1. 2023년과 2024년의 월별 평균기온은 얼마나 달랐는가?
@@ -64,7 +62,6 @@ p3-1/
 │   ├── 03_daily_temperature_change.png
 │   └── 04_weekly_temperature_change.png
 ├── analysis.py
-├── PRESENTATION_GUIDE.md
 ├── REPORT.md
 ├── README.md
 ├── requirements.txt
