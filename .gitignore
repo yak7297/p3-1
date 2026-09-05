@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.py[cod]
+.DS_Store
+.env
+.ipynb_checkpoints/
+.matplotlib-cache/
+work/
+data/*.csv
