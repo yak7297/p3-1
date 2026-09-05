@@ -34,6 +34,7 @@
 - 가장 큰 하락은 2023년 1월 24일의 -13.9℃, 가장 큰 상승은 2023년 3월 14일의 +6.3℃였습니다.
 - IQR 기준으로 통계적으로 큰 변화는 22일이었으며, 하락 21일과 상승 1일이었습니다.
 - 7일 이동평균은 겨울의 저점과 여름의 고점, 계절이 바뀌는 흐름을 일별 값보다 분명하게 보여주었습니다.
+- 주 단위로 다시 집계하면 큰 변화 5주 중 상승 3주, 하락 2주로 나타나 일 단위의 방향성이 유지되지 않았습니다.
 
 ## 시각화
 
@@ -45,6 +46,10 @@
 
 ![서울 일평균기온의 전일 대비 변화](images/03_daily_temperature_change.png)
 
+### 주 단위 집계로 확인한 반례
+
+![주 단위로 다시 집계한 서울 평균기온 변화](images/04_weekly_temperature_change.png)
+
 ## 프로젝트 구성
 
 ```text
@@ -54,7 +59,8 @@ p3-1/
 ├── images/
 │   ├── 01_daily_temperature_moving_average.png
 │   ├── 02_monthly_average_comparison.png
-│   └── 03_daily_temperature_change.png
+│   ├── 03_daily_temperature_change.png
+│   └── 04_weekly_temperature_change.png
 ├── analysis.py
 ├── REPORT.md
 ├── README.md
@@ -87,7 +93,7 @@ python -m pip install -r requirements.txt
 python analysis.py
 ```
 
-실행이 끝나면 데이터 품질 점검과 주요 분석 결과가 터미널에 표시되고, `images` 폴더의 그래프 3개가 생성됩니다.
+실행이 끝나면 데이터 품질 점검과 주요 분석 결과가 터미널에 표시되고, `images` 폴더의 그래프 4개가 생성됩니다.
 
 ## 사용 기술
 

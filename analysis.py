@@ -169,6 +169,43 @@ def create_charts(frame: pd.DataFrame, image_dir: Path) -> None:
     fig.savefig(image_dir / "03_daily_temperature_change.png", dpi=150)
     plt.close(fig)
 
+    # 일 단위에서 얻은 결론이 집계 단위를 바꿔도 유지되는지 확인한다.
+    weekly = (
+        frame.set_index("날짜")["평균기온(℃)"]
+        .resample("W-SUN")
+        .agg(["mean", "count"])
+    )
+    weekly = weekly[weekly["count"] == 7].copy()  # 시작·종료의 불완전한 주 제외
+    weekly["전주 대비 차이(℃)"] = weekly["mean"].diff()
+    weekly_changes = weekly["전주 대비 차이(℃)"].dropna()
+    weekly_q1 = weekly_changes.quantile(0.25)
+    weekly_q3 = weekly_changes.quantile(0.75)
+    weekly_iqr = weekly_q3 - weekly_q1
+    weekly_lower = weekly_q1 - 1.5 * weekly_iqr
+    weekly_upper = weekly_q3 + 1.5 * weekly_iqr
+    weekly_unusual = weekly[
+        (weekly["전주 대비 차이(℃)"] < weekly_lower)
+        | (weekly["전주 대비 차이(℃)"] > weekly_upper)
+    ]
+
+    fig, axis = plt.subplots(figsize=(13, 6))
+    axis.plot(weekly.index, weekly["전주 대비 차이(℃)"], color="#59a14f",
+              linewidth=1.2, label="전주 대비 주평균 차이")
+    axis.axhline(0, color="#333333", linewidth=0.8)
+    axis.axhline(weekly_upper, color="#e45756", linestyle="--", linewidth=1,
+                 label=f"IQR 상한 {weekly_upper:.1f}℃")
+    axis.axhline(weekly_lower, color="#e45756", linestyle="--", linewidth=1,
+                 label=f"IQR 하한 {weekly_lower:.1f}℃")
+    axis.scatter(weekly_unusual.index, weekly_unusual["전주 대비 차이(℃)"],
+                 color="#e45756", s=35, zorder=3, label="통계적으로 큰 변화")
+    axis.set(title="주 단위로 다시 집계한 서울 평균기온 변화",
+             xlabel="주 종료일(일요일)", ylabel="전주 대비 주평균 차이(℃)")
+    axis.grid(alpha=0.25)
+    axis.legend(ncol=2)
+    fig.tight_layout()
+    fig.savefig(image_dir / "04_weekly_temperature_change.png", dpi=150)
+    plt.close(fig)
+
     print("\n시계열 분석 결과")
     print("7일 이동평균: 첫 6일을 제외한 725개 값 계산")
     print("연도별 월평균: 2023년 12개 월, 2024년 12개 월 계산")
@@ -182,6 +219,15 @@ def create_charts(frame: pd.DataFrame, image_dir: Path) -> None:
           f"해당 {len(unusual)}일")
     print("통계적으로 큰 변화는 관측 오류로 단정하거나 삭제하지 않았습니다.")
     print("그래프 저장: images/03_daily_temperature_change.png")
+    print("\n집계 단위 변경 반례")
+    print(f"완전한 7일로 구성된 주: {len(weekly)}개, 전주 대비 변화: "
+          f"{weekly_changes.count()}개")
+    print(f"주 단위 IQR 기준: {weekly_lower:.1f}℃ 미만 또는 "
+          f"{weekly_upper:.1f}℃ 초과, 해당 {len(weekly_unusual)}주")
+    print(f"주 단위 큰 변화 방향: 상승 "
+          f"{(weekly_unusual['전주 대비 차이(℃)'] > 0).sum()}주, 하락 "
+          f"{(weekly_unusual['전주 대비 차이(℃)'] < 0).sum()}주")
+    print("그래프 저장: images/04_weekly_temperature_change.png")
 
 
 def main() -> None:
